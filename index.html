@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questions sur la Transition Enfance/Âge Adulte</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            perspective: 1000px;
+        }
+
+        .card-container {
+            height: 320px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+
+        .card-container.flipped .card {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 25px;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            border: 3px solid rgba(255,255,255,0.3);
+        }
+
+        .card-back {
+            background: white;
+            transform: rotateY(180deg);
+            overflow-y: auto;
+        }
+
+        .card-back p {
+            color: #333;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            text-align: left;
+        }
+
+        .card-number {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(255,255,255,0.3);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .instructions {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        .reset-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 25px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card-container {
+                height: 280px;
+            }
+
+            .card-back p {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Animation d'apparition */
+        .card-container {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-container:nth-child(1) { animation-delay: 0.1s; }
+        .card-container:nth-child(2) { animation-delay: 0.2s; }
+        .card-container:nth-child(3) { animation-delay: 0.3s; }
+        .card-container:nth-child(4) { animation-delay: 0.4s; }
+        .card-container:nth-child(5) { animation-delay: 0.5s; }
+        .card-container:nth-child(6) { animation-delay: 0.6s; }
+        .card-container:nth-child(7) { animation-delay: 0.7s; }
+        .card-container:nth-child(8) { animation-delay: 0.8s; }
+        .card-container:nth-child(9) { animation-delay: 0.9s; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Questions sur la Transition Enfance/Âge Adulte</h1>
+        
+        <div class="instructions">
+            <p>Cliquez sur une carte pour découvrir la question. Cliquez à nouveau pour la retourner.</p>
+        </div>
+
+        <div class="cards-grid" id="cardsGrid"></div>
+
+        <div style="text-align: center;">
+            <button class="reset-btn" onclick="resetCards()">Retourner toutes les cartes</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            "Quels sont la manière et le moment opportuns pour préparer de manière anticipée les adolescents et les familles à avoir un nouveau statut et de nouvelles responsabilités ?",
+            
+            "Quels intervenants spécialisés peuvent organiser avec les personnes et les familles qui le souhaitent des réunions thématiques ?",
+            
+            "Comment développer les compétences des adolescents en situation de handicap afin de mieux les préparer au passage à l'âge adulte ?",
+            
+            "Comment intensifier l'accompagnement de la personne et de ses aidants à cette période ?",
+            
+            "Quel accompagnement proposer aux personnes et aux familles le cas échéant concernant le suivi de la transition biologique et ses conséquences sur l'identité ? Quels supports proposer pour améliorer la compréhension ? Comment adapter le discours en fonction de la personne ?",
+            
+            "Quelle traçabilité des changements de comportements consécutifs aux modifications corporelles mettre en place ?",
+            
+            "Quel lien établir avec les professionnels et les nouveaux interlocuteurs assurant le suivi pour l'âge adulte ?",
+            
+            "À quels intervenants spécialisés faites-vous appel pour organiser la transition enfance/âge adulte avec les personnes et les familles ?",
+            
+            "Quel lien s'établit entre les professionnels du soin assurant le suivi et les nouveaux interlocuteurs du soin pour la prise en charge adulte (pédopsychiatre à psychiatre, pédiatre à généraliste) ?"
+        ];
+
+        const cardsGrid = document.getElementById('cardsGrid');
+
+        // Créer les cartes
+        questions.forEach((question, index) => {
+            const cardContainer = document.createElement('div');
+            cardContainer.className = 'card-container';
+            cardContainer.innerHTML = `
+                <div class="card">
+                    <div class="card-face card-front">
+                        <div class="card-number">${index + 1}</div>
+                        <div>Question ${index + 1}</div>
+                    </div>
+                    <div class="card-face card-back">
+                        <p>${question}</p>
+                    </div>
+                </div>
+            `;
+            
+            cardContainer.addEventListener('click', function() {
+                this.classList.toggle('flipped');
+            });
+            
+            cardsGrid.appendChild(cardContainer);
+        });
+
+        // Fonction pour retourner toutes les cartes
+        function resetCards() {
+            const allCards = document.querySelectorAll('.card-container');
+            allCards.forEach(card => {
+                card.classList.remove('flipped');
+            });
+        }
+
+        // Empêcher la sélection de texte lors du double-clic
+        document.addEventListener('selectstart', function(e) {
+            if (e.target.closest('.card-front')) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>
