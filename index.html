@@ -42,7 +42,7 @@
         }
 
         .card-container {
-            height: 320px;
+            height: 350px;
             position: relative;
             cursor: pointer;
         }
@@ -67,8 +67,7 @@
             border-radius: 15px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.2);
             display: flex;
-            align-items: center;
-            justify-content: center;
+            flex-direction: column;
             padding: 25px;
         }
 
@@ -79,12 +78,15 @@
             font-weight: bold;
             text-align: center;
             border: 3px solid rgba(255,255,255,0.3);
+            align-items: center;
+            justify-content: center;
         }
 
         .card-back {
             background: white;
             transform: rotateY(180deg);
             overflow-y: auto;
+            justify-content: space-between;
         }
 
         .card-back p {
@@ -92,6 +94,8 @@
             line-height: 1.6;
             font-size: 0.95rem;
             text-align: left;
+            margin-bottom: 15px;
+            flex-grow: 1;
         }
 
         .card-number {
@@ -138,6 +142,93 @@
             box-shadow: 0 6px 12px rgba(0,0,0,0.3);
         }
 
+        .response-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .response-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        /* Modal pour afficher les réponses */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 20px;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+        }
+
+        .modal-content h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .modal-content ul {
+            list-style-position: inside;
+            padding-left: 0;
+        }
+
+        .modal-content li {
+            margin-bottom: 12px;
+            line-height: 1.6;
+            color: #333;
+        }
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 1.5rem;
@@ -148,17 +239,25 @@
             }
 
             .card-container {
-                height: 280px;
+                height: 320px;
             }
 
             .card-back p {
                 font-size: 0.85rem;
+            }
+
+            .modal-content {
+                margin: 10% auto;
+                padding: 20px;
+                width: 95%;
             }
         }
 
         /* Animation d'apparition */
         .card-container {
             animation: fadeIn 0.5s ease-in;
+            opacity: 0;
+            animation-fill-mode: forwards;
         }
 
         @keyframes fadeIn {
@@ -180,7 +279,6 @@
         .card-container:nth-child(6) { animation-delay: 0.6s; }
         .card-container:nth-child(7) { animation-delay: 0.7s; }
         .card-container:nth-child(8) { animation-delay: 0.8s; }
-        .card-container:nth-child(9) { animation-delay: 0.9s; }
     </style>
 </head>
 <body>
@@ -188,7 +286,7 @@
         <h1>Questions sur la Transition Enfance/Âge Adulte</h1>
         
         <div class="instructions">
-            <p>Cliquez sur une carte pour découvrir la question. Cliquez à nouveau pour la retourner.</p>
+            <p>Cliquez sur une carte pour découvrir la question. Cliquez sur "Voir les éléments de réponse" pour plus de détails.</p>
         </div>
 
         <div class="cards-grid" id="cardsGrid"></div>
@@ -198,31 +296,124 @@
         </div>
     </div>
 
+    <!-- Modal pour les réponses -->
+    <div id="responseModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <ul id="modalContent"></ul>
+        </div>
+    </div>
+
     <script>
-        const questions = [
-            "Quels sont la manière et le moment opportuns pour préparer de manière anticipée les adolescents et les familles à avoir un nouveau statut et de nouvelles responsabilités ?",
-            
-            "Quels intervenants spécialisés peuvent organiser avec les personnes et les familles qui le souhaitent des réunions thématiques ?",
-            
-            "Comment développer les compétences des adolescents en situation de handicap afin de mieux les préparer au passage à l'âge adulte ?",
-            
-            "Comment intensifier l'accompagnement de la personne et de ses aidants à cette période ?",
-            
-            "Quel accompagnement proposer aux personnes et aux familles le cas échéant concernant le suivi de la transition biologique et ses conséquences sur l'identité ? Quels supports proposer pour améliorer la compréhension ? Comment adapter le discours en fonction de la personne ?",
-            
-            "Quelle traçabilité des changements de comportements consécutifs aux modifications corporelles mettre en place ?",
-            
-            "Quel lien établir avec les professionnels et les nouveaux interlocuteurs assurant le suivi pour l'âge adulte ?",
-            
-            "À quels intervenants spécialisés faites-vous appel pour organiser la transition enfance/âge adulte avec les personnes et les familles ?",
-            
-            "Quel lien s'établit entre les professionnels du soin assurant le suivi et les nouveaux interlocuteurs du soin pour la prise en charge adulte (pédopsychiatre à psychiatre, pédiatre à généraliste) ?"
+        const questionsData = [
+            {
+                question: "Quels sont la manière et le moment opportuns pour préparer de manière anticipée les adolescents et les familles à avoir un nouveau statut et de nouvelles responsabilités ?",
+                responses: [
+                    "Débuter la préparation dès 14-15 ans (3-4 ans avant la majorité)",
+                    "Organiser des réunions de projet personnalisé incluant la thématique de la transition",
+                    "Mettre en place des ateliers sur les droits et devoirs à l'âge adulte",
+                    "Prévoir des visites de structures adultes (ESAT, FAM, SAVS, etc.)",
+                    "Travailler progressivement l'autodétermination et la prise de décision",
+                    "Associer la famille via des temps d'information dédiés"
+                ]
+            },
+            {
+                question: "Quels intervenants spécialisés peuvent organiser avec les personnes et les familles qui le souhaitent des réunions thématiques ?",
+                responses: [
+                    "Psychologue ou neuropsychologue",
+                    "Équipe de la MDPH (pour les droits et démarches)",
+                    "Référent parcours handicap",
+                    "Conseiller en insertion professionnelle (Cap Emploi)",
+                    "Assistant social",
+                    "Mandataire judiciaire (pour parler protection juridique)",
+                    "Pairs-aidants ou anciens usagers",
+                    "Représentants d'associations de familles"
+                ]
+            },
+            {
+                question: "Comment développer les compétences des adolescents en situation de handicap afin de mieux les préparer au passage à l'âge adulte ?",
+                responses: [
+                    "Renforcer les compétences psychosociales (autonomie, communication, gestion émotionnelle)",
+                    "Travailler les actes de la vie quotidienne (AVQ)",
+                    "Travailler le rythme de la journée et la succession des temps formels et informels",
+                    "Développer les habiletés professionnelles via stages ou ateliers",
+                    "Former à l'utilisation des transports en commun",
+                    "Enseigner la gestion budgétaire de base",
+                    "Favoriser l'expression des choix et l'autodétermination",
+                    "Utiliser des outils adaptés (FALC, supports visuels)"
+                ]
+            },
+            {
+                question: "Comment intensifier l'accompagnement de la personne et de ses aidants à cette période ?",
+                responses: [
+                    "Augmenter la fréquence des entretiens individuels",
+                    "Mettre en place un référent unique de transition",
+                    "Créer des groupes de parole pour adolescents et familles séparément",
+                    "Organiser des réunions de coordination pluridisciplinaire",
+                    "Proposer un soutien psychologique renforcé",
+                    "Prévoir des temps de répit pour les aidants",
+                    "Établir un calendrier de suivi rapproché (mensuel)"
+                ]
+            },
+            {
+                question: "Quel accompagnement proposer aux personnes et aux familles le cas échéant concernant le suivi de la transition biologique et ses conséquences sur l'identité ? Quels supports proposer pour améliorer la compréhension ? Comment adapter le discours en fonction de la personne ?",
+                responses: [
+                    "Proposer des séances d'éducation à la vie affective et sexuelle adaptées",
+                    "Utiliser des supports FALC sur la puberté et les changements corporels",
+                    "Faire intervenir une infirmière ou sage-femme spécialisée",
+                    "Orienter vers des dispositifs handigynéco",
+                    "Adapter le discours au niveau de compréhension (pictogrammes, vidéos, etc.)",
+                    "Travailler l'image de soi et l'estime de soi",
+                    "Proposer des entretiens individuels sur l'intimité et le consentement",
+                    "Orienter vers des ressources spécialisées si nécessaire"
+                ]
+            },
+            {
+                question: "Quel lien établir avec les professionnels et les nouveaux interlocuteurs assurant le suivi pour l'âge adulte ?",
+                responses: [
+                    "Organiser des réunions de transition tripartites (IME/structure adulte/famille)",
+                    "Transmettre un dossier de liaison complet",
+                    "Prévoir des périodes de chevauchement et de co-accompagnement",
+                    "Identifier un référent de parcours dans la structure d'accueil",
+                    "Mettre en place des conventions de partenariat entre structures",
+                    "Prévoir des visites croisées entre professionnels",
+                    "Assurer un suivi post-transition (bilan à 3-6 mois)"
+                ]
+            },
+            {
+                question: "À quels intervenants spécialisés faites-vous appel pour organiser la transition enfance/âge adulte avec les personnes et les familles ?",
+                responses: [
+                    "Coordonnateur de parcours complexe",
+                    "Référent MDPH",
+                    "Équipe mobile d'appui à la scolarisation (EMAS) si besoin",
+                    "Services de la protection de l'enfance (si ASE)",
+                    "Dispositif d'Appui à la Coordination (DAC)",
+                    "Réseau de santé ou dispositif territorial (PTSM)",
+                    "Équipe relais handicaps rares si pertinent",
+                    "Service d'accompagnement (SAVS/SAMSAH) en anticipation"
+                ]
+            },
+            {
+                question: "Quel lien s'établit entre les professionnels du soin assurant le suivi et les nouveaux interlocuteurs du soin pour la prise en charge adulte (pédopsychiatre à psychiatre, pédiatre à généraliste) ?",
+                responses: [
+                    "Organiser une consultation de transition avec les deux médecins",
+                    "Prévoir une période de suivi conjoint (quelques mois)",
+                    "Organiser une réunion de synthèse médicale",
+                    "Assurer la continuité des traitements et protocoles",
+                    "Utiliser des outils de liaison type \"formulaire de transition\"",
+                    "Respecter le secret médical et recueillir les consentements"
+                ]
+            }
         ];
 
         const cardsGrid = document.getElementById('cardsGrid');
+        const modal = document.getElementById('responseModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
 
         // Créer les cartes
-        questions.forEach((question, index) => {
+        questionsData.forEach((data, index) => {
             const cardContainer = document.createElement('div');
             cardContainer.className = 'card-container';
             cardContainer.innerHTML = `
@@ -232,17 +423,52 @@
                         <div>Question ${index + 1}</div>
                     </div>
                     <div class="card-face card-back">
-                        <p>${question}</p>
+                        <p>${data.question}</p>
+                        <a href="#" class="response-link" onclick="showResponse(${index}); return false;">📋 Voir les éléments de réponse</a>
                     </div>
                 </div>
             `;
             
-            cardContainer.addEventListener('click', function() {
-                this.classList.toggle('flipped');
+            // Gérer le clic sur la carte (mais pas sur le lien)
+            const card = cardContainer.querySelector('.card');
+            cardContainer.addEventListener('click', function(e) {
+                // Ne retourne pas la carte si on clique sur le lien
+                if (!e.target.classList.contains('response-link')) {
+                    this.classList.toggle('flipped');
+                }
             });
             
             cardsGrid.appendChild(cardContainer);
         });
+
+        // Afficher la modal avec les réponses
+        function showResponse(index) {
+            const data = questionsData[index];
+            modalTitle.textContent = `Question ${index + 1} : Éléments de réponse`;
+            modalContent.innerHTML = '';
+            
+            data.responses.forEach(response => {
+                const li = document.createElement('li');
+                li.textContent = response;
+                modalContent.appendChild(li);
+            });
+            
+            modal.style.display = 'block';
+            // Empêcher la propagation pour ne pas fermer la modal immédiatement
+            event.stopPropagation();
+        }
+
+        // Fermer la modal
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        // Fermer la modal si on clique en dehors
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
 
         // Fonction pour retourner toutes les cartes
         function resetCards() {
@@ -256,6 +482,13 @@
         document.addEventListener('selectstart', function(e) {
             if (e.target.closest('.card-front')) {
                 e.preventDefault();
+            }
+        });
+
+        // Fermer la modal avec la touche Échap
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
             }
         });
     </script>
