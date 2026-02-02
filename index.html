@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Questions sur la Transition Enfance/Âge Adulte</title>
+    <title>La Famille en Or - Transition Enfance/Âge Adulte</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap');
+
         * {
             margin: 0;
             padding: 0;
@@ -12,485 +14,746 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             min-height: 100vh;
             padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            overflow-x: hidden;
         }
 
-        h1 {
-            color: white;
+        .game-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Header avec logo */
+        .game-header {
             text-align: center;
             margin-bottom: 30px;
-            font-size: 2rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
-        .container {
-            max-width: 1200px;
-            width: 100%;
+        .game-title {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 3.5rem;
+            color: #ffd700;
+            text-shadow:
+                3px 3px 0 #ff6b00,
+                6px 6px 0 rgba(0,0,0,0.3);
+            letter-spacing: 3px;
+            animation: titleGlow 2s ease-in-out infinite alternate;
         }
 
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            perspective: 1000px;
+        @keyframes titleGlow {
+            from { text-shadow: 3px 3px 0 #ff6b00, 6px 6px 0 rgba(0,0,0,0.3), 0 0 20px rgba(255,215,0,0.3); }
+            to { text-shadow: 3px 3px 0 #ff6b00, 6px 6px 0 rgba(0,0,0,0.3), 0 0 40px rgba(255,215,0,0.6); }
         }
 
-        .card-container {
-            height: 350px;
-            position: relative;
-            cursor: pointer;
+        .game-subtitle {
+            color: #87ceeb;
+            font-size: 1.1rem;
+            margin-top: 10px;
         }
 
-        .card {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.6s;
+        /* Score Board */
+        .score-board {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-bottom: 25px;
         }
 
-        .card-container.flipped .card {
-            transform: rotateY(180deg);
-        }
-
-        .card-face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
+        .score-display {
+            background: linear-gradient(180deg, #2d2d44 0%, #1a1a2e 100%);
+            border: 4px solid #ffd700;
             border-radius: 15px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            padding: 15px 40px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(255,215,0,0.3);
+        }
+
+        .score-label {
+            color: #ffd700;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .score-value {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 3rem;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        /* Question Display */
+        .question-panel {
+            background: linear-gradient(180deg, #1e3a5f 0%, #0d2137 100%);
+            border: 5px solid #ffd700;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow:
+                0 0 30px rgba(255,215,0,0.4),
+                inset 0 0 50px rgba(0,0,0,0.3);
+        }
+
+        .question-number {
+            background: #ffd700;
+            color: #1a1a2e;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            color: #fff;
+            font-size: 1.3rem;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        /* Answer Board */
+        .answer-board {
+            background: linear-gradient(180deg, #0a1628 0%, #162447 100%);
+            border: 6px solid #ffd700;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow:
+                0 0 40px rgba(255,215,0,0.3),
+                inset 0 0 60px rgba(0,0,0,0.5);
+        }
+
+        .answers-grid {
             display: flex;
             flex-direction: column;
-            padding: 25px;
+            gap: 8px;
         }
 
-        .card-front {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-align: center;
-            border: 3px solid rgba(255,255,255,0.3);
+        .answer-row {
+            display: flex;
+            gap: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .answer-row:hover:not(.revealed) {
+            transform: scale(1.02);
+        }
+
+        .answer-number {
+            background: linear-gradient(180deg, #ffd700 0%, #ff8c00 100%);
+            color: #1a1a2e;
+            width: 50px;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Bebas Neue', cursive;
+            font-size: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 0 #b8860b;
+        }
+
+        .answer-box {
+            flex: 1;
+            background: linear-gradient(180deg, #1e3a5f 0%, #0d2137 100%);
+            border: 3px solid #4a6fa5;
+            border-radius: 8px;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .answer-hidden {
+            width: 100%;
+            height: 100%;
+            display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .card-back {
-            background: white;
-            transform: rotateY(180deg);
-            overflow-y: auto;
-            justify-content: space-between;
-        }
-
-        .card-back p {
-            color: #333;
-            line-height: 1.6;
-            font-size: 0.95rem;
-            text-align: left;
-            margin-bottom: 15px;
-            flex-grow: 1;
-        }
-
-        .card-number {
+        .answer-hidden::before {
+            content: '';
             position: absolute;
-            top: 15px;
-            left: 15px;
-            background: rgba(255,255,255,0.3);
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                90deg,
+                #2d4a6f 0px,
+                #2d4a6f 20px,
+                #1e3a5f 20px,
+                #1e3a5f 40px
+            );
+        }
+
+        .answer-text {
+            color: #fff;
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            opacity: 0;
+            transform: rotateX(90deg);
+            transition: all 0.5s;
+            z-index: 1;
+        }
+
+        .answer-row.revealed .answer-box {
+            background: linear-gradient(180deg, #2563eb 0%, #1e40af 100%);
+            border-color: #60a5fa;
+            animation: revealFlash 0.5s;
+        }
+
+        .answer-row.revealed .answer-text {
+            opacity: 1;
+            transform: rotateX(0deg);
+        }
+
+        .answer-row.revealed .answer-hidden::before {
+            display: none;
+        }
+
+        @keyframes revealFlash {
+            0%, 50% { background: linear-gradient(180deg, #ffd700 0%, #ff8c00 100%); }
+            100% { background: linear-gradient(180deg, #2563eb 0%, #1e40af 100%); }
+        }
+
+        .answer-points {
+            background: linear-gradient(180deg, #ffd700 0%, #ff8c00 100%);
+            color: #1a1a2e;
+            width: 70px;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Bebas Neue', cursive;
+            font-size: 1.8rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 0 #b8860b;
+            position: relative;
+        }
+
+        .points-hidden {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, #1e3a5f 0%, #0d2137 100%);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .points-hidden::after {
+            content: '?';
+            color: #4a6fa5;
+            font-size: 1.5rem;
+        }
+
+        .answer-row.revealed .points-hidden {
+            display: none;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 1.3rem;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .btn-reveal {
+            background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            box-shadow: 0 4px 0 #15803d;
+        }
+
+        .btn-reveal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #15803d;
+        }
+
+        .btn-reveal:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #15803d;
+        }
+
+        .btn-next {
+            background: linear-gradient(180deg, #ffd700 0%, #ff8c00 100%);
+            color: #1a1a2e;
+            box-shadow: 0 4px 0 #b8860b;
+        }
+
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #b8860b;
+        }
+
+        .btn-reset {
+            background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            box-shadow: 0 4px 0 #b91c1c;
+        }
+
+        .btn-reset:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #b91c1c;
+        }
+
+        /* Question Navigation */
+        .question-nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-dot {
             width: 40px;
             height: 40px;
             border-radius: 50%;
+            background: #2d4a6f;
+            border: 3px solid #4a6fa5;
+            color: #87ceeb;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            font-size: 1.2rem;
         }
 
-        .instructions {
-            background: rgba(255,255,255,0.2);
+        .nav-dot:hover {
+            background: #3d5a7f;
+            transform: scale(1.1);
+        }
+
+        .nav-dot.active {
+            background: linear-gradient(180deg, #ffd700 0%, #ff8c00 100%);
+            border-color: #ffd700;
+            color: #1a1a2e;
+            box-shadow: 0 0 15px rgba(255,215,0,0.5);
+        }
+
+        .nav-dot.completed {
+            background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+            border-color: #22c55e;
             color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 25px;
-            backdrop-filter: blur(10px);
         }
 
-        .reset-btn {
-            background: white;
-            color: #667eea;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 25px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            transition: all 0.3s;
-        }
-
-        .reset-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-        }
-
-        .response-link {
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 0.9rem;
-            transition: all 0.3s;
-            text-align: center;
-            margin-top: auto;
-        }
-
-        .response-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-        }
-
-        /* Modal pour afficher les réponses */
-        .modal {
-            display: none;
+        /* Sound effect visual */
+        .ding-effect {
             position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5rem;
+            color: #ffd700;
+            text-shadow: 0 0 30px rgba(255,215,0,0.8);
+            opacity: 0;
+            pointer-events: none;
             z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.6);
-            backdrop-filter: blur(5px);
         }
 
-        .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 30px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 800px;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            animation: slideIn 0.3s ease-out;
+        .ding-effect.show {
+            animation: dingPop 0.6s ease-out;
         }
 
-        @keyframes slideIn {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+        @keyframes dingPop {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
         }
 
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            line-height: 20px;
+        /* Wrong answer X */
+        .wrong-mark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 15rem;
+            color: #ef4444;
+            text-shadow: 0 0 50px rgba(239,68,68,0.8);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1000;
+            font-family: 'Bebas Neue', cursive;
         }
 
-        .close:hover,
-        .close:focus {
-            color: #000;
+        .wrong-mark.show {
+            animation: wrongPop 0.8s ease-out;
         }
 
-        .modal-content h2 {
-            color: #667eea;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
+        @keyframes wrongPop {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3) rotate(-10deg); }
+            30% { opacity: 1; transform: translate(-50%, -50%) scale(1.1) rotate(5deg); }
+            50% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1.2) rotate(0deg); }
         }
 
-        .modal-content ul {
-            list-style-position: inside;
-            padding-left: 0;
+        /* Instructions */
+        .instructions {
+            background: rgba(255,215,0,0.1);
+            border: 2px solid rgba(255,215,0,0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
         }
 
-        .modal-content li {
-            margin-bottom: 12px;
-            line-height: 1.6;
-            color: #333;
+        .instructions p {
+            color: #87ceeb;
+            font-size: 0.95rem;
         }
 
+        .instructions strong {
+            color: #ffd700;
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            h1 {
+            .game-title {
+                font-size: 2.5rem;
+            }
+
+            .question-text {
+                font-size: 1.1rem;
+            }
+
+            .answer-number {
+                width: 35px;
                 font-size: 1.5rem;
             }
 
-            .cards-grid {
-                grid-template-columns: 1fr;
+            .answer-points {
+                width: 50px;
+                font-size: 1.3rem;
             }
 
-            .card-container {
-                height: 320px;
+            .answer-text {
+                font-size: 0.8rem;
             }
 
-            .card-back p {
-                font-size: 0.85rem;
+            .score-board {
+                gap: 20px;
             }
 
-            .modal-content {
-                margin: 10% auto;
-                padding: 20px;
-                width: 95%;
+            .score-display {
+                padding: 10px 25px;
             }
-        }
 
-        /* Animation d'apparition */
-        .card-container {
-            animation: fadeIn 0.5s ease-in;
-            opacity: 0;
-            animation-fill-mode: forwards;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+            .score-value {
+                font-size: 2rem;
             }
         }
 
-        .card-container:nth-child(1) { animation-delay: 0.1s; }
-        .card-container:nth-child(2) { animation-delay: 0.2s; }
-        .card-container:nth-child(3) { animation-delay: 0.3s; }
-        .card-container:nth-child(4) { animation-delay: 0.4s; }
-        .card-container:nth-child(5) { animation-delay: 0.5s; }
-        .card-container:nth-child(6) { animation-delay: 0.6s; }
-        .card-container:nth-child(7) { animation-delay: 0.7s; }
-        .card-container:nth-child(8) { animation-delay: 0.8s; }
+        @media (max-width: 480px) {
+            .answer-box {
+                padding: 0 10px;
+            }
+
+            .answer-text {
+                font-size: 0.7rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Questions sur la Transition Enfance/Âge Adulte</h1>
-        
+    <div class="game-container">
+        <header class="game-header">
+            <h1 class="game-title">🌟 La Famille en Or 🌟</h1>
+            <p class="game-subtitle">Édition Transition Enfance / Âge Adulte</p>
+        </header>
+
+        <div class="score-board">
+            <div class="score-display">
+                <div class="score-label">Score Total</div>
+                <div class="score-value" id="totalScore">0</div>
+            </div>
+            <div class="score-display">
+                <div class="score-label">Cette Manche</div>
+                <div class="score-value" id="roundScore">0</div>
+            </div>
+        </div>
+
+        <div class="question-panel">
+            <div class="question-number" id="questionNumber">Question 1/8</div>
+            <p class="question-text" id="questionText"></p>
+        </div>
+
+        <div class="answer-board">
+            <div class="answers-grid" id="answersGrid"></div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-reveal" onclick="revealAll()">Tout Révéler</button>
+            <button class="btn btn-next" onclick="nextQuestion()">Question Suivante →</button>
+            <button class="btn btn-reset" onclick="resetGame()">Recommencer</button>
+        </div>
+
+        <div class="question-nav" id="questionNav"></div>
+
         <div class="instructions">
-            <p>Cliquez sur une carte pour découvrir la question. Cliquez sur "Voir les éléments de réponse" pour plus de détails.</p>
-        </div>
-
-        <div class="cards-grid" id="cardsGrid"></div>
-
-        <div style="text-align: center;">
-            <button class="reset-btn" onclick="resetCards()">Retourner toutes les cartes</button>
+            <p><strong>Comment jouer :</strong> Cliquez sur une réponse pour la révéler et gagner des points.
+            Essayez de deviner les réponses les plus populaires !</p>
         </div>
     </div>
 
-    <!-- Modal pour les réponses -->
-    <div id="responseModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2 id="modalTitle"></h2>
-            <ul id="modalContent"></ul>
-        </div>
-    </div>
+    <div class="ding-effect" id="dingEffect">✓</div>
+    <div class="wrong-mark" id="wrongMark">✗</div>
 
     <script>
         const questionsData = [
             {
-                question: "Quels sont la manière et le moment opportuns pour préparer de manière anticipée les adolescents et les familles à avoir un nouveau statut et de nouvelles responsabilités ?",
-                responses: [
-                    "Débuter la préparation dès 14-15 ans (3-4 ans avant la majorité)",
-                    "Organiser des réunions de projet personnalisé incluant la thématique de la transition",
-                    "Mettre en place des ateliers sur les droits et devoirs à l'âge adulte",
-                    "Prévoir des visites de structures adultes (ESAT, FAM, SAVS, etc.)",
-                    "Travailler progressivement l'autodétermination et la prise de décision",
-                    "Associer la famille via des temps d'information dédiés"
+                question: "Quels sont la manière et le moment opportuns pour préparer les adolescents et les familles à un nouveau statut ?",
+                answers: [
+                    { text: "Débuter la préparation dès 14-15 ans", points: 25 },
+                    { text: "Organiser des réunions de projet personnalisé", points: 20 },
+                    { text: "Mettre en place des ateliers droits/devoirs", points: 18 },
+                    { text: "Prévoir des visites de structures adultes", points: 15 },
+                    { text: "Travailler l'autodétermination", points: 12 },
+                    { text: "Associer la famille via des temps dédiés", points: 10 }
                 ]
             },
             {
-                question: "Quels intervenants spécialisés peuvent organiser avec les personnes et les familles qui le souhaitent des réunions thématiques ?",
-                responses: [
-                    "Psychologue ou neuropsychologue",
-                    "Équipe de la MDPH (pour les droits et démarches)",
-                    "Référent parcours handicap",
-                    "Conseiller en insertion professionnelle (Cap Emploi)",
-                    "Assistant social",
-                    "Mandataire judiciaire (pour parler protection juridique)",
-                    "Pairs-aidants ou anciens usagers",
-                    "Représentants d'associations de familles"
+                question: "Quels intervenants spécialisés peuvent organiser des réunions thématiques avec les personnes et familles ?",
+                answers: [
+                    { text: "Psychologue ou neuropsychologue", points: 22 },
+                    { text: "Équipe de la MDPH", points: 20 },
+                    { text: "Référent parcours handicap", points: 18 },
+                    { text: "Assistant social", points: 15 },
+                    { text: "Mandataire judiciaire", points: 13 },
+                    { text: "Pairs-aidants ou anciens usagers", points: 12 }
                 ]
             },
             {
-                question: "Comment développer les compétences des adolescents en situation de handicap afin de mieux les préparer au passage à l'âge adulte ?",
-                responses: [
-                    "Renforcer les compétences psychosociales (autonomie, communication, gestion émotionnelle)",
-                    "Travailler les actes de la vie quotidienne (AVQ)",
-                    "Travailler le rythme de la journée et la succession des temps formels et informels",
-                    "Développer les habiletés professionnelles via stages ou ateliers",
-                    "Former à l'utilisation des transports en commun",
-                    "Enseigner la gestion budgétaire de base",
-                    "Favoriser l'expression des choix et l'autodétermination",
-                    "Utiliser des outils adaptés (FALC, supports visuels)"
+                question: "Comment développer les compétences des adolescents en situation de handicap pour le passage à l'âge adulte ?",
+                answers: [
+                    { text: "Renforcer les compétences psychosociales", points: 24 },
+                    { text: "Travailler les actes de la vie quotidienne", points: 20 },
+                    { text: "Développer les habiletés professionnelles", points: 18 },
+                    { text: "Former à l'utilisation des transports", points: 15 },
+                    { text: "Enseigner la gestion budgétaire", points: 13 },
+                    { text: "Utiliser des outils adaptés (FALC)", points: 10 }
                 ]
             },
             {
                 question: "Comment intensifier l'accompagnement de la personne et de ses aidants à cette période ?",
-                responses: [
-                    "Augmenter la fréquence des entretiens individuels",
-                    "Mettre en place un référent unique de transition",
-                    "Créer des groupes de parole pour adolescents et familles séparément",
-                    "Organiser des réunions de coordination pluridisciplinaire",
-                    "Proposer un soutien psychologique renforcé",
-                    "Prévoir des temps de répit pour les aidants",
-                    "Établir un calendrier de suivi rapproché (mensuel)"
+                answers: [
+                    { text: "Augmenter la fréquence des entretiens", points: 23 },
+                    { text: "Mettre en place un référent unique", points: 20 },
+                    { text: "Créer des groupes de parole", points: 17 },
+                    { text: "Organiser des réunions pluridisciplinaires", points: 15 },
+                    { text: "Proposer un soutien psychologique renforcé", points: 13 },
+                    { text: "Prévoir des temps de répit pour aidants", points: 12 }
                 ]
             },
             {
-                question: "Quel accompagnement proposer aux personnes et aux familles le cas échéant concernant le suivi de la transition biologique et ses conséquences sur l'identité ? Quels supports proposer pour améliorer la compréhension ? Comment adapter le discours en fonction de la personne ?",
-                responses: [
-                    "Proposer des séances d'éducation à la vie affective et sexuelle adaptées",
-                    "Utiliser des supports FALC sur la puberté et les changements corporels",
-                    "Faire intervenir une infirmière ou sage-femme spécialisée",
-                    "Orienter vers des dispositifs handigynéco",
-                    "Adapter le discours au niveau de compréhension (pictogrammes, vidéos, etc.)",
-                    "Travailler l'image de soi et l'estime de soi",
-                    "Proposer des entretiens individuels sur l'intimité et le consentement",
-                    "Orienter vers des ressources spécialisées si nécessaire"
+                question: "Quel accompagnement proposer concernant le suivi de la transition biologique et l'identité ?",
+                answers: [
+                    { text: "Éducation vie affective et sexuelle adaptée", points: 25 },
+                    { text: "Supports FALC sur puberté et changements", points: 20 },
+                    { text: "Intervention infirmière spécialisée", points: 17 },
+                    { text: "Orienter vers dispositifs handigynéco", points: 15 },
+                    { text: "Travailler l'image et l'estime de soi", points: 13 },
+                    { text: "Entretiens sur intimité et consentement", points: 10 }
                 ]
             },
             {
-                question: "Quel lien établir avec les professionnels et les nouveaux interlocuteurs assurant le suivi pour l'âge adulte ?",
-                responses: [
-                    "Organiser des réunions de transition tripartites (IME/structure adulte/famille)",
-                    "Transmettre un dossier de liaison complet",
-                    "Prévoir des périodes de chevauchement et de co-accompagnement",
-                    "Identifier un référent de parcours dans la structure d'accueil",
-                    "Mettre en place des conventions de partenariat entre structures",
-                    "Prévoir des visites croisées entre professionnels",
-                    "Assurer un suivi post-transition (bilan à 3-6 mois)"
+                question: "Quel lien établir avec les professionnels assurant le suivi pour l'âge adulte ?",
+                answers: [
+                    { text: "Réunions de transition tripartites", points: 24 },
+                    { text: "Transmettre un dossier de liaison complet", points: 20 },
+                    { text: "Périodes de co-accompagnement", points: 17 },
+                    { text: "Identifier un référent dans la structure", points: 15 },
+                    { text: "Conventions de partenariat", points: 14 },
+                    { text: "Suivi post-transition (bilan 3-6 mois)", points: 10 }
                 ]
             },
             {
-                question: "À quels intervenants spécialisés faites-vous appel pour organiser la transition enfance/âge adulte avec les personnes et les familles ?",
-                responses: [
-                    "Coordonnateur de parcours complexe",
-                    "Référent MDPH",
-                    "Équipe mobile d'appui à la scolarisation (EMAS) si besoin",
-                    "Services de la protection de l'enfance (si ASE)",
-                    "Dispositif d'Appui à la Coordination (DAC)",
-                    "Réseau de santé ou dispositif territorial (PTSM)",
-                    "Équipe relais handicaps rares si pertinent",
-                    "Service d'accompagnement (SAVS/SAMSAH) en anticipation"
+                question: "À quels intervenants faites-vous appel pour organiser la transition avec les personnes et familles ?",
+                answers: [
+                    { text: "Coordonnateur de parcours complexe", points: 23 },
+                    { text: "Référent MDPH", points: 20 },
+                    { text: "Équipe mobile d'appui (EMAS)", points: 17 },
+                    { text: "Dispositif d'Appui à la Coordination", points: 15 },
+                    { text: "Réseau de santé territorial", points: 13 },
+                    { text: "Service SAVS/SAMSAH en anticipation", points: 12 }
                 ]
             },
             {
-                question: "Quel lien s'établit entre les professionnels du soin assurant le suivi et les nouveaux interlocuteurs du soin pour la prise en charge adulte (pédopsychiatre à psychiatre, pédiatre à généraliste) ?",
-                responses: [
-                    "Organiser une consultation de transition avec les deux médecins",
-                    "Prévoir une période de suivi conjoint (quelques mois)",
-                    "Organiser une réunion de synthèse médicale",
-                    "Assurer la continuité des traitements et protocoles",
-                    "Utiliser des outils de liaison type \"formulaire de transition\"",
-                    "Respecter le secret médical et recueillir les consentements"
+                question: "Quel lien entre les professionnels du soin enfant et les nouveaux interlocuteurs adultes ?",
+                answers: [
+                    { text: "Consultation de transition avec 2 médecins", points: 25 },
+                    { text: "Période de suivi conjoint", points: 22 },
+                    { text: "Réunion de synthèse médicale", points: 18 },
+                    { text: "Transmettre le dossier médical complet", points: 15 },
+                    { text: "Continuité des traitements et protocoles", points: 12 },
+                    { text: "Utiliser des formulaires de transition", points: 8 }
                 ]
             }
         ];
 
-        const cardsGrid = document.getElementById('cardsGrid');
-        const modal = document.getElementById('responseModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalContent = document.getElementById('modalContent');
+        let currentQuestion = 0;
+        let totalScore = 0;
+        let roundScore = 0;
+        let revealedAnswers = [];
+        let completedQuestions = [];
 
-        // Créer les cartes
-        questionsData.forEach((data, index) => {
-            const cardContainer = document.createElement('div');
-            cardContainer.className = 'card-container';
-            cardContainer.innerHTML = `
-                <div class="card">
-                    <div class="card-face card-front">
-                        <div class="card-number">${index + 1}</div>
-                        <div>Question ${index + 1}</div>
+        // Initialize game
+        function initGame() {
+            createQuestionNav();
+            loadQuestion(0);
+        }
+
+        // Create question navigation dots
+        function createQuestionNav() {
+            const nav = document.getElementById('questionNav');
+            nav.innerHTML = '';
+            questionsData.forEach((_, index) => {
+                const dot = document.createElement('button');
+                dot.className = 'nav-dot' + (index === 0 ? ' active' : '');
+                dot.textContent = index + 1;
+                dot.onclick = () => loadQuestion(index);
+                nav.appendChild(dot);
+            });
+        }
+
+        // Load a question
+        function loadQuestion(index) {
+            currentQuestion = index;
+            roundScore = 0;
+            revealedAnswers = [];
+
+            const question = questionsData[index];
+            document.getElementById('questionNumber').textContent = `Question ${index + 1}/${questionsData.length}`;
+            document.getElementById('questionText').textContent = question.question;
+            document.getElementById('roundScore').textContent = '0';
+
+            // Update nav dots
+            document.querySelectorAll('.nav-dot').forEach((dot, i) => {
+                dot.classList.remove('active');
+                if (i === index) dot.classList.add('active');
+                if (completedQuestions.includes(i)) dot.classList.add('completed');
+            });
+
+            // Create answer rows
+            const grid = document.getElementById('answersGrid');
+            grid.innerHTML = '';
+
+            question.answers.forEach((answer, i) => {
+                const row = document.createElement('div');
+                row.className = 'answer-row';
+                row.onclick = () => revealAnswer(i);
+                row.innerHTML = `
+                    <div class="answer-number">${i + 1}</div>
+                    <div class="answer-box">
+                        <div class="answer-hidden"></div>
+                        <span class="answer-text">${answer.text}</span>
                     </div>
-                    <div class="card-face card-back">
-                        <p>${data.question}</p>
-                        <a href="#" class="response-link" onclick="showResponse(${index}); return false;">📋 Voir les éléments de réponse</a>
+                    <div class="answer-points">
+                        <div class="points-hidden"></div>
+                        ${answer.points}
                     </div>
-                </div>
-            `;
-            
-            // Gérer le clic sur la carte (mais pas sur le lien)
-            const card = cardContainer.querySelector('.card');
-            cardContainer.addEventListener('click', function(e) {
-                // Ne retourne pas la carte si on clique sur le lien
-                if (!e.target.classList.contains('response-link')) {
-                    this.classList.toggle('flipped');
+                `;
+                grid.appendChild(row);
+            });
+        }
+
+        // Reveal a single answer
+        function revealAnswer(index) {
+            if (revealedAnswers.includes(index)) return;
+
+            const rows = document.querySelectorAll('.answer-row');
+            const row = rows[index];
+            const points = questionsData[currentQuestion].answers[index].points;
+
+            row.classList.add('revealed');
+            revealedAnswers.push(index);
+
+            // Update scores
+            roundScore += points;
+            totalScore += points;
+            document.getElementById('roundScore').textContent = roundScore;
+            document.getElementById('totalScore').textContent = totalScore;
+
+            // Show ding effect
+            showDingEffect();
+
+            // Check if all answers revealed
+            if (revealedAnswers.length === questionsData[currentQuestion].answers.length) {
+                if (!completedQuestions.includes(currentQuestion)) {
+                    completedQuestions.push(currentQuestion);
+                    document.querySelectorAll('.nav-dot')[currentQuestion].classList.add('completed');
+                }
+            }
+        }
+
+        // Reveal all answers
+        function revealAll() {
+            const rows = document.querySelectorAll('.answer-row');
+            rows.forEach((row, index) => {
+                if (!revealedAnswers.includes(index)) {
+                    setTimeout(() => {
+                        revealAnswer(index);
+                    }, index * 300);
                 }
             });
-            
-            cardsGrid.appendChild(cardContainer);
-        });
-
-        // Afficher la modal avec les réponses
-        function showResponse(index) {
-            const data = questionsData[index];
-            modalTitle.textContent = `Question ${index + 1} : Éléments de réponse`;
-            modalContent.innerHTML = '';
-            
-            data.responses.forEach(response => {
-                const li = document.createElement('li');
-                li.textContent = response;
-                modalContent.appendChild(li);
-            });
-            
-            modal.style.display = 'block';
-            // Empêcher la propagation pour ne pas fermer la modal immédiatement
-            event.stopPropagation();
         }
 
-        // Fermer la modal
-        function closeModal() {
-            modal.style.display = 'none';
+        // Next question
+        function nextQuestion() {
+            const nextIndex = (currentQuestion + 1) % questionsData.length;
+            loadQuestion(nextIndex);
         }
 
-        // Fermer la modal si on clique en dehors
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = 'none';
-            }
+        // Reset game
+        function resetGame() {
+            totalScore = 0;
+            completedQuestions = [];
+            document.getElementById('totalScore').textContent = '0';
+            document.querySelectorAll('.nav-dot').forEach(dot => dot.classList.remove('completed'));
+            loadQuestion(0);
         }
 
-        // Fonction pour retourner toutes les cartes
-        function resetCards() {
-            const allCards = document.querySelectorAll('.card-container');
-            allCards.forEach(card => {
-                card.classList.remove('flipped');
-            });
+        // Show visual effect for correct answer
+        function showDingEffect() {
+            const effect = document.getElementById('dingEffect');
+            effect.classList.add('show');
+            setTimeout(() => effect.classList.remove('show'), 600);
         }
 
-        // Empêcher la sélection de texte lors du double-clic
-        document.addEventListener('selectstart', function(e) {
-            if (e.target.closest('.card-front')) {
-                e.preventDefault();
-            }
-        });
+        // Show wrong answer effect (for future use)
+        function showWrongEffect() {
+            const effect = document.getElementById('wrongMark');
+            effect.classList.add('show');
+            setTimeout(() => effect.classList.remove('show'), 800);
+        }
 
-        // Fermer la modal avec la touche Échap
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeModal();
-            }
-        });
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initGame);
     </script>
 </body>
 </html>
